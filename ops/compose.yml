@@ -73,14 +73,7 @@ services:
         if [ -d "sites/new-money.42bucks.com" ]; then
           echo "Site already exists, skipping creation";
         else
-          bench new-site new-money.42bucks.com
-          --mariadb-user-host-login-scope='%'
-          --admin-password="$ADMIN_PASSWORD"
-          --db-root-username=root
-          --db-root-password="$DB_ROOT_PASSWORD"
-          --install-app payments
-          --install-app lms
-          --set-default;
+          bench new-site new-money.42bucks.com --mariadb-user-host-login-scope='%' --admin-password="$ADMIN_PASSWORD" --db-root-username=root --db-root-password="$DB_ROOT_PASSWORD" --install-app payments --install-app lms --set-default;
         fi;
     environment:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}

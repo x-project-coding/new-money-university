@@ -60,10 +60,14 @@ sudo certbot --nginx -d new-money.42bucks.com   # adds :443 + redirect in place
 ## Content + settings seeding
 
 ```bash
-RESEND_API_KEY=<key> docker compose -p new-money -f compose.yml exec -T \
-  -e RESEND_API_KEY backend \
-  bench --site new-money.42bucks.com console < seed_content.py
+docker compose -p new-money -f compose.yml exec -T -e RESEND_API_KEY=<key> \
+  backend bench --site new-money.42bucks.com execute lms.seed_nmu.run
 ```
+
+The seeder ships inside the app (`lms/seed_nmu.py`), so it is available in
+any image built from this repo. Do not pipe scripts into `bench console`:
+piped IPython splits multi-line blocks at blank lines and executes the
+fragments, which is how the first deploy of this site half-ran.
 
 Idempotent. Sets Website Settings branding (app name, logo, favicon,
 home page → lms, signup enabled), LMS Settings, the Resend SMTP outgoing
