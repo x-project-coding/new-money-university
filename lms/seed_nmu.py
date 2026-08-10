@@ -179,8 +179,8 @@ def run():
 	lms_settings = frappe.get_doc("LMS Settings")
 	lms_settings.disable_signup = 0
 	lms_settings.meta_description = (
-		"New Money University: an online school for practical money skills. "
-		"Courses on budgeting, investing, and earning online."
+		"NEW MONEY UNIVERSITY: закрытый онлайн-университет заработка в эпоху ИИ. "
+		"Направления, наставники и сообщество студентов."
 	)
 	lms_settings.save()
 
