@@ -112,9 +112,15 @@
 					class="flex items-center gap-3 text-ink-gray-8"
 				>
 					<span class="lucide-book-open size-4 shrink-0 text-ink-gray-7" />
+					<!-- Count and noun are interpolated into one string so a
+					     translation can place the number where its own grammar
+					     needs it (Russian declines the noun after a numeral). -->
 					<span>
-						{{ course.data?.lessons }}
-						{{ course.data?.lessons === 1 ? __('Lesson') : __('Lessons') }}
+						{{
+							course.data?.lessons === 1
+								? __('{0} Lesson', [course.data?.lessons])
+								: __('{0} Lessons', [course.data?.lessons])
+						}}
 					</span>
 				</div>
 				<div
@@ -123,11 +129,10 @@
 				>
 					<span class="lucide-help-circle size-4 shrink-0 text-ink-gray-7" />
 					<span>
-						{{ course.data?.quiz_count }}
 						{{
 							course.data?.quiz_count === 1
-								? __('Quiz topic')
-								: __('Quiz topics')
+								? __('{0} Quiz topic', [course.data?.quiz_count])
+								: __('{0} Quiz topics', [course.data?.quiz_count])
 						}}
 					</span>
 				</div>

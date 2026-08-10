@@ -40,10 +40,11 @@
 						<template v-if="course.data.enrollments">
 							<div class="flex items-center gap-1.5">
 								<span class="lucide-users-round size-4" />
-								<span
-									>{{ formatAmount(course.data.enrollments) }}
-									{{ __('Students') }}</span
-								>
+								<span>{{
+									__('{0} Students', [
+										formatAmount(course.data.enrollments),
+									])
+								}}</span>
 							</div>
 							<span class="lucide-dot size-5 text-ink-gray-7" />
 						</template>
