@@ -491,7 +491,7 @@ export function getSidebarLinks(forMobile = false) {
 
 const getSidebarItems = (forMobile = false) => {
 	const { userResource } = usersStore()
-	const { settings } = useSettings()
+	const { settings, sidebarSettings } = useSettings()
 
 	return [
 		{
@@ -562,10 +562,16 @@ const getSidebarItems = (forMobile = false) => {
 					},
 				},
 				{
+					// LMS Settings ships a per-section sidebar toggle and
+					// get_sidebar_settings returns it, but this entry never
+					// consulted it - turning Jobs off left the nav item.
 					label: 'Jobs',
 					icon: 'Briefcase',
 					to: 'Jobs',
 					activeFor: ['Jobs', 'JobDetail'],
+					condition: () => {
+						return sidebarSettings.data?.jobs
+					},
 				},
 				{
 					label: 'Statistics',
