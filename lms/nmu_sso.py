@@ -75,15 +75,26 @@ def login(token: str, redirect: str | None = None):
 		parts = full_name.split(" ", 1)
 		user_doc = frappe.new_doc("User")
 		user_doc.email = email
+		user_doc.user_type = "Website User"
 		user_doc.first_name = parts[0]
 		user_doc.last_name = parts[1] if len(parts) > 1 else ""
 		user_doc.full_name = full_name
 		user_doc.send_welcome_email = False
 		user_doc.append("roles", {"role": "LMS Student"})
 		user_doc.insert(ignore_permissions=True)
+		if user_doc.user_type != "Website User":
+			frappe.throw(frappe._("SSO provisioning failed"), frappe.AuthenticationError)
 
 	frappe.local.login_manager.login_as(email)
 
-	location = redirect if redirect and redirect.startswith("/") and not redirect.startswith("//") else "/lms"
+	location = "/lms"
+	if (
+		redirect
+		and redirect.startswith("/")
+		and not redirect.startswith("//")
+		and "\\" not in redirect
+		and not any(ord(ch) < 32 for ch in redirect)
+	):
+		location = redirect
 	frappe.local.response["type"] = "redirect"
 	frappe.local.response["location"] = location
