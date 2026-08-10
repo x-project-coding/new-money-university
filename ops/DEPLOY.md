@@ -21,6 +21,7 @@ git clone --depth 1 https://github.com/frappe/frappe_docker
 cd frappe_docker
 DOCKER_BUILDKIT=1 docker build \
   --build-arg FRAPPE_BRANCH=version-16 \
+  --build-arg CACHE_BUST=<sha8> \
   --secret id=apps_json,src=/tmp/apps.json \
   -f images/layered/Containerfile \
   -t ghcr.io/x-project-coding/new-money-university:<sha8> \
@@ -32,6 +33,10 @@ docker push ghcr.io/x-project-coding/new-money-university:latest
 Build from `origin/main` of this repo only (the apps.json above pins the
 GitHub URL, so a local dirty tree can never leak into the image). `<sha8>` =
 short SHA of this repo's main; the `:<sha8>` tags are the rollback points.
+
+`CACHE_BUST` is mandatory on rebuilds: the bench-init layer clones this repo
+at build time, so without it docker serves the cached layer and the image
+silently ships the previous commit (every step reports CACHED).
 
 ## Stack
 
