@@ -3,7 +3,9 @@
 		<template #default>
 			<div class="text-base">
 				<div class="text-center">
-					<div class="text-[30px]">🔥</div>
+					<div class="flex justify-center">
+						<span class="lucide-flame size-8 text-ink-amber-3" />
+					</div>
 					<div class="mt-3">
 						<div class="text-ink-gray-5 mb-1">
 							{{
