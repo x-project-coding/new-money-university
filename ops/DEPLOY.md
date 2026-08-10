@@ -81,6 +81,25 @@ sender university@xsor-email.com), and creates the three example courses
 (Money Foundations, Investing 101, Earning Online) plus the Investing
 Basics Check quiz under instructor dean@new-money.42bucks.com.
 
+## Platform integration (agent app + shared signup)
+
+The university is an agent app on the 42bucks platform, "like every other
+agent app": repo `x-agent-apps` → `apps/university`, served at
+`https://app.42bucks.com/a/university/` (container `x-agent-apps-university-rNN`
+on 127.0.0.1:3054, nginx location in the `x-app` vhost). It is registered as
+`AgentAppTemplate` slug `university`, bound to the Operations Lead agent, and
+installed across all its workspaces.
+
+Signup is shared with the main app: the agent app's BFF
+(`GET /api/university/launch`) reads the signed agent-app session, mints a
+240s HMAC token (`NMU_SSO_SECRET`, shared with this site's
+`site_config.nmu_sso_secret`), and hands the browser
+`/api/method/lms.nmu_sso.login?token=...` (`lms/nmu_sso.py`), which
+provisions the Website User (LMS Student) on first visit and opens the
+session. All platform users land in the same course catalog. The LMS's own
+signup remains enabled for direct visitors; disable it via LMS Settings +
+Website Settings `disable_signup` once platform SSO should be the only door.
+
 ## Upgrades
 
 ```bash
