@@ -11,15 +11,16 @@
 }
 
 /* Primary solid buttons carry the brand green. frappe-ui solid buttons paint
-   the gray-7 surface; scoping to <button> in light theme leaves other gray-7
-   surfaces and the dark theme's inverted palette untouched. */
-html:not([data-theme='dark']) button.bg-surface-gray-7 {
+   the gray-10 surface (hover gray-9, active gray-8); scoping to <button> in
+   light theme leaves other gray surfaces and the dark theme's inverted
+   palette untouched. */
+html:not([data-theme='dark']) button.bg-surface-gray-10 {
 	background-color: var(--nmu-primary);
 }
-html:not([data-theme='dark']) button.bg-surface-gray-7:hover {
+html:not([data-theme='dark']) button.bg-surface-gray-10:hover {
 	background-color: var(--nmu-primary-hover);
 }
-html:not([data-theme='dark']) button.bg-surface-gray-7:active {
+html:not([data-theme='dark']) button.bg-surface-gray-10:active {
 	background-color: var(--nmu-primary-active);
 }
 

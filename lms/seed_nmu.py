@@ -172,7 +172,7 @@ def run():
 	website.app_name = "New Money University"
 	website.app_logo = "/assets/lms/frontend/learning.svg"
 	website.favicon = "/assets/lms/frontend/favicon.png"
-	website.home_page = "lms"
+	website.home_page = "lms/courses"
 	website.disable_signup = 0
 	website.save()
 
