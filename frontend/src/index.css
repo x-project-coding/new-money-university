@@ -31,6 +31,27 @@ html:not([data-theme='dark']) button.bg-surface-gray-10:active {
 	--surface-sidebar: var(--surface-gray-1);
 }
 
+/* Nothing set a base text colour, so every element that inherits `color`
+   (segmented tabs, the workspace switcher, plain <p> in third-party blocks)
+   fell back to the browser default black - invisible on a dark background.
+   Anchor it to the theme's ink token so inheritance follows the theme. */
+body {
+	color: var(--ink-gray-8);
+}
+
+/* Text selection had no styling at all, so the browser default (light blue
+   fill, black text) rendered selected text unreadable in dark mode. Paint it
+   with the brand red at low alpha and force a readable foreground in both
+   themes. */
+::selection {
+	background-color: color-mix(in srgb, var(--nmu-primary) 30%, transparent);
+	color: var(--ink-gray-9);
+}
+::-moz-selection {
+	background-color: color-mix(in srgb, var(--nmu-primary) 30%, transparent);
+	color: var(--ink-gray-9);
+}
+
 /* frappe-ui beta.7 FormLabel differs from InputLabel; match standalone labels
    (and stray inline <label>s) to the field-label style. */
 label.block:not([data-slot='label']) {
