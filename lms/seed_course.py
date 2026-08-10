@@ -166,6 +166,9 @@ def ensure_course(spec):
 			"published": 1,
 			"published_on": frappe.utils.now(),
 			"instructors": [{"instructor": spec.get("instructor", DEFAULT_INSTRUCTOR)}],
+			# Both are mandatory at insert time, not just on save.
+			"short_introduction": spec["intro"],
+			"description": spec["description"],
 		})
 		course.insert()
 	course.title = spec["title"]
@@ -177,7 +180,7 @@ def ensure_course(spec):
 	return course
 
 
-def run(content_dir):
+def run(content_dir="/tmp/nmu-course"):
 	spec = json.load(open(os.path.join(content_dir, "course.json")))
 	meta = json.load(open(os.path.join(content_dir, "meta.json")))
 	course = ensure_course(spec)
