@@ -90,7 +90,19 @@ docker compose -p new-money -f compose.yml pull backend
 docker compose -p new-money -f compose.yml up -d
 docker compose -p new-money -f compose.yml exec backend \
   bench --site new-money.42bucks.com migrate
+# MANDATORY after any image rollover, in this order:
+docker compose -p new-money -f compose.yml exec backend \
+  bench --site new-money.42bucks.com clear-cache
+docker compose -p new-money -f compose.yml restart backend frontend
 ```
+
+Why the last two steps: redis-cache (not recreated on rollover) still holds
+the OLD image's asset manifest; fresh gunicorn workers read it, memoize it
+in process memory, and render HTML referencing hashed CSS/JS bundles that no
+longer exist -> guests get an unstyled, broken login page (bit us 2026-08-10).
+`clear-cache` purges redis, the backend restart drops the workers' memoized
+copy, and the frontend restart re-resolves the backend's DNS (its nginx pins
+the upstream IP at startup, so a backend restart alone leaves it 502ing).
 
 ## Operations
 
