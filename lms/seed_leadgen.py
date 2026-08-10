@@ -59,6 +59,10 @@ def to_editorjs(blocks, image_urls, quiz_names, assignment_names):
 				out.append({"id": block_id(), "type": "assignment", "data": {"assignment": name}})
 		elif t == "code":
 			out.append({"id": block_id(), "type": "codeBox", "data": {"code": b["text"]}})
+		elif t == "divider":
+			# No delimiter tool in this editor build; a markdown rule renders
+			# as a real <hr> through LessonContent's markdown-it pass.
+			out.append({"id": block_id(), "type": "markdown", "data": {"text": "---"}})
 	return json.dumps({"time": 1754812800000, "blocks": out, "version": "2.29.0"}, ensure_ascii=False)
 
 

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Generate branded course infographics with GPT Image 2 via OpenRouter.
+"""Generate branded 16:9 course infographics with GPT Image 2 via OpenRouter's
+dedicated images endpoint (which honors aspect_ratio, unlike chat completions).
 
-Usage:
     OPENROUTER_API_KEY=... python3 gen_course_images.py prompts.json outdir/
 
 prompts.json: [{"slug": "funnel", "prompt": "..."}, ...]
-Each prompt should describe the layout AND the exact (Russian) text to render.
-Already-existing outdir/<slug>.png files are skipped, so reruns only fill gaps.
+Each prompt describes a full-frame 16:9 infographic and the exact Russian text.
+Existing outdir/<slug>.png files are skipped, so reruns only fill gaps.
 """
 
 import base64
@@ -19,11 +19,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 MODEL = "openai/gpt-5.4-image-2"
 STYLE = (
-    "Modern flat vector infographic, dark background #0b0b0e, red #e62e39 accents "
-    "with white and light-gray text, minimal geometric shapes, thin outline icons, "
-    "clean sans-serif typography, generous spacing, subtle diagonal texture, "
-    "no watermark, no logos other than described. All labels must be spelled "
-    "exactly as given, in Russian. "
+    "Premium 16:9 landscape infographic that fills the entire frame edge to edge "
+    "with no large empty areas. Dark background #0b0b0e with subtle darker texture, "
+    "bold red #e62e39 accents, white and light-gray text. Sleek modern flat design, "
+    "rounded card panels with thin borders, thin-line outline icons, clean bold "
+    "sans-serif typography, clear visual hierarchy, generous internal padding, "
+    "professional dashboard aesthetic, high quality, crisp. No watermark, no extra "
+    "logos. Render every Russian label exactly as written, correctly spelled. "
+    "Composition: "
 )
 
 
@@ -31,17 +34,16 @@ def generate(slug: str, prompt: str, outdir: str, retries: int = 2) -> str:
     path = os.path.join(outdir, f"{slug}.png")
     if os.path.exists(path):
         return f"skip {slug}"
-    body = json.dumps(
-        {
-            "model": MODEL,
-            "messages": [{"role": "user", "content": STYLE + prompt}],
-            "modalities": ["image", "text"],
-        }
-    ).encode()
+    body = json.dumps({
+        "model": MODEL,
+        "prompt": STYLE + prompt,
+        "aspect_ratio": "16:9",
+        "resolution": "1K",
+    }).encode()
     for attempt in range(retries + 1):
         try:
             req = urllib.request.Request(
-                "https://openrouter.ai/api/v1/chat/completions",
+                "https://openrouter.ai/api/v1/images",
                 data=body,
                 headers={
                     "Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}",
@@ -50,8 +52,7 @@ def generate(slug: str, prompt: str, outdir: str, retries: int = 2) -> str:
             )
             with urllib.request.urlopen(req, timeout=300) as r:
                 d = json.load(r)
-            url = d["choices"][0]["message"]["images"][0]["image_url"]["url"]
-            png = base64.b64decode(url.split(",", 1)[1])
+            png = base64.b64decode(d["data"][0]["b64_json"])
             with open(path, "wb") as f:
                 f.write(png)
             return f"ok {slug} ({len(png)} bytes)"
