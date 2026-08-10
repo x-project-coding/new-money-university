@@ -2,12 +2,13 @@
 @import 'frappe-ui/list-style.css';
 @import './styles/blockEditor.css';
 
-/* New Money University brand tokens */
+/* New Money University brand tokens (matched to new-money-site.42bucks.com:
+   --red #e62e39, --red-hot #ff3d48, --red-deep #8f1218 on #0b0b0e) */
 :root {
-	--nmu-primary: #0a5c39;
-	--nmu-primary-hover: #0c6b43;
-	--nmu-primary-active: #084d30;
-	--nmu-gold: #f5b93e;
+	--nmu-primary: #e62e39;
+	--nmu-primary-hover: #ff3d48;
+	--nmu-primary-active: #8f1218;
+	--nmu-dark: #0b0b0e;
 }
 
 /* Primary solid buttons carry the brand green. frappe-ui solid buttons paint
