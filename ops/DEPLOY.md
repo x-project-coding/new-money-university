@@ -123,6 +123,40 @@ longer exist -> guests get an unstyled, broken login page (bit us 2026-08-10).
 copy, and the frontend restart re-resolves the backend's DNS (its nginx pins
 the upstream IP at startup, so a backend restart alone leaves it 502ing).
 
+## Asset-only fast path (frontend-only changes)
+
+The full layered build needs ~20GB of buildkit cache and this host's root fs
+runs chronically near 100% -- a full rebuild has twice pushed it to 0 bytes
+free, which threatens every other service on the box. When a change touches
+only `frontend/` (Vue, CSS), build just the assets on top of the last image:
+
+```bash
+git fetch origin main:refs/remotes/origin/main   # deploy from origin/main, never the worktree
+mkdir -p /tmp/nmu-ctx && git archive origin/main | tar -x -C /tmp/nmu-ctx
+cp ops/Dockerfile.assets /tmp/nmu-ctx/
+cd /tmp/nmu-ctx && DOCKER_BUILDKIT=1 docker build -f Dockerfile.assets \
+  --build-arg BASE=ghcr.io/x-project-coding/new-money-university:<current-sha8> \
+  -t ghcr.io/x-project-coding/new-money-university:<new-sha8> .
+docker tag ...:<new-sha8> ...:latest && docker push both tags
+```
+
+Takes ~2 minutes and a few hundred MB. Use the full layered Containerfile
+whenever python, dependencies, or the frappe version change.
+
+**Gotcha -- nginx serves assets from its OWN copy.** `sites/assets/lms` is a
+symlink to `apps/lms/lms/public`, and each container resolves it inside its own
+filesystem. `apps/` is NOT in the shared `sites` volume, so assets rebuilt in
+the backend container 404 until they are also copied into the frontend
+container:
+
+```bash
+docker exec new-money-backend-1 tar -cf - -C /home/frappe/frappe-bench/apps/lms/lms/public frontend \
+  | docker exec -i new-money-frontend-1 tar -xf - -C /home/frappe/frappe-bench/apps/lms/lms/public
+```
+
+This only matters when hot-patching a running stack; a proper image rollover
+carries both containers.
+
 ## Operations
 
 - Logs: `docker compose -p new-money -f compose.yml logs -f backend`
