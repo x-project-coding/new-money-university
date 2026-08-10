@@ -60,9 +60,11 @@ def to_editorjs(blocks, image_urls, quiz_names, assignment_names):
 		elif t == "code":
 			out.append({"id": block_id(), "type": "codeBox", "data": {"code": b["text"]}})
 		elif t == "divider":
-			# No delimiter tool in this editor build; a markdown rule renders
-			# as a real <hr> through LessonContent's markdown-it pass.
-			out.append({"id": block_id(), "type": "markdown", "data": {"text": "---"}})
+			# No delimiter tool in this editor build. The markdown tool writes
+			# its `text` straight into innerHTML (it only parses markdown while
+			# typing/pasting), so emit the rule as HTML rather than as "---",
+			# which would render as three literal dashes.
+			out.append({"id": block_id(), "type": "markdown", "data": {"text": "<hr>"}})
 	return json.dumps({"time": 1754812800000, "blocks": out, "version": "2.29.0"}, ensure_ascii=False)
 
 
@@ -76,14 +78,23 @@ def upload_images():
 		if not fname.endswith(".png"):
 			continue
 		slug = fname[:-4]
-		existing = frappe.db.get_value(
-			"File", {"attached_to_doctype": "LMS Course", "attached_to_name": COURSE_NAME,
-			         "file_name": ["like", f"lg-{slug}%"]}, "file_url")
-		if existing:
-			urls[slug] = existing
-			continue
 		with open(os.path.join(IMAGES_DIR, fname), "rb") as f:
-			doc = save_file(f"lg-{slug}.png", f.read(), "LMS Course", COURSE_NAME, is_private=0)
+			payload = f.read()
+		existing = frappe.get_all(
+			"File",
+			{"attached_to_doctype": "LMS Course", "attached_to_name": COURSE_NAME,
+			 "file_name": ["like", f"lg-{slug}%"]},
+			["name", "file_url", "file_size"],
+		)
+		# Re-upload when the source image changed (size differs); reusing by
+		# name alone silently kept an older render on every reseed.
+		fresh = next((f for f in existing if f.file_size == len(payload)), None)
+		if fresh:
+			urls[slug] = fresh.file_url
+			continue
+		for stale in existing:
+			frappe.delete_doc("File", stale.name, force=1, ignore_permissions=True)
+		doc = save_file(f"lg-{slug}.png", payload, "LMS Course", COURSE_NAME, is_private=0)
 		urls[slug] = doc.file_url
 	return urls
 
