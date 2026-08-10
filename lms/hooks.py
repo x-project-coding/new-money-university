@@ -3,7 +3,7 @@ import frappe
 from . import __version__ as app_version
 
 app_name = "frappe_lms"
-app_title = "Learning"
+app_title = "New Money University"
 app_publisher = "Frappe"
 app_description = "Open Source Learning Management System built with Frappe Framework"
 app_icon_url = "/assets/lms/images/lms-logo.png"
@@ -278,7 +278,7 @@ add_to_apps_screen = [
 	{
 		"name": "lms",
 		"logo": "/assets/lms/frontend/learning.svg",
-		"title": "Learning",
+		"title": "New Money University",
 		"route": f"/{get_lms_path()}",
 		"has_permission": "lms.lms.api.check_app_permission",
 	}

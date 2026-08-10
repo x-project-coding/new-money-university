@@ -2,6 +2,27 @@
 @import 'frappe-ui/list-style.css';
 @import './styles/blockEditor.css';
 
+/* New Money University brand tokens */
+:root {
+	--nmu-primary: #0a5c39;
+	--nmu-primary-hover: #0c6b43;
+	--nmu-primary-active: #084d30;
+	--nmu-gold: #f5b93e;
+}
+
+/* Primary solid buttons carry the brand green. frappe-ui solid buttons paint
+   the gray-7 surface; scoping to <button> in light theme leaves other gray-7
+   surfaces and the dark theme's inverted palette untouched. */
+html:not([data-theme='dark']) button.bg-surface-gray-7 {
+	background-color: var(--nmu-primary);
+}
+html:not([data-theme='dark']) button.bg-surface-gray-7:hover {
+	background-color: var(--nmu-primary-hover);
+}
+html:not([data-theme='dark']) button.bg-surface-gray-7:active {
+	background-color: var(--nmu-primary-active);
+}
+
 /* This build makes --surface-sidebar transparent in dark mode; point it at
    gray-1 so the sidebar keeps a visible surface. */
 [data-theme='dark'] {

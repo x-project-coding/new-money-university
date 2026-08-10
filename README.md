@@ -1,25 +1,30 @@
 <div align="center" markdown="1">
 
-<img src=".github/lms-logo.png" alt="Frappe Learning logo" width="80" height="80"/>
-<h1>Frappe Learning</h1>
+<img src="frontend/public/learning.svg" alt="New Money University logo" width="80" height="80"/>
+<h1>New Money University</h1>
 
-**Easy to use, open source, Learning Management System**
-
-![Tests](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/vandxn/main&style=flat&logo=cypress)
+**An online school for practical money skills, live at [new-money.42bucks.com](https://new-money.42bucks.com)**
 
 </div>
 
+## About this repository
 
-<div align="center">
-	<img src=".github/hero.png?v=5" alt="Hero Image" width="72%" />
-</div>
-<br />
-<div align="center">
-	<a href="https://frappe.io/learning">Website</a>
-	-
-	<a href="https://docs.frappe.io/learning">Documentation</a>
-</div>
+New Money University is a branded adaptation of [Frappe Learning](https://github.com/frappe/lms)
+(AGPL-3.0), operated by the 42bucks estate. The upstream remote is kept wired so framework and
+feature updates can be merged in.
 
+What this fork changes:
+
+- Brand identity: New Money University name, logo mark, favicon, and green/gold accent palette
+  across the sidebar, PWA manifest, install prompt, onboarding, and default email templates.
+- Server-side fallbacks (`lms/www/_lms.py`, `lms/lms/api.py`, `lms/hooks.py`) default to the
+  New Money University identity when Website Settings are empty.
+- `ops/` carries the production deployment for new-money.42bucks.com (image build recipe,
+  docker compose stack, nginx vhost, content seeding). See `ops/DEPLOY.md`.
+
+Everything below is the upstream Frappe Learning documentation, which applies unchanged.
+
+---
 ## Frappe Learning
 Frappe Learning is an easy-to-use learning system that helps you bring structure to your content.
 
